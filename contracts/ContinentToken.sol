@@ -136,5 +136,9 @@ contract ContinentToken is ERC721Enumerable, Ownable {
     function setBaseURI(string memory _baseTokenURI) public onlyOwner {
         baseTokenURI = _baseTokenURI;
     }
+
+    function withdraw() external onlyOwner {
+        payable(owner()).sendValue(address(this).balance);
+    }
 }
 
