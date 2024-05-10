@@ -74,7 +74,7 @@ contract ContinentToken is ERC721Enumerable, Ownable {
         _transfer(ownerOf(_tokenId), _to, _tokenId);
 
         if(msg.sender != owner()){
-            require(owner().sendValue(teamFee), "Transfer failed");
+            Address.sendValue(payable(owner()), teamFee);
         }
 
         continents[_tokenId].owner = _to;
