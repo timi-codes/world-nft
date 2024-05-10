@@ -9,12 +9,13 @@ import "@openzeppelin/contracts/utils/Address.sol";
 contract ContinentToken is ERC721Enumerable, Ownable {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
+    using Address for address payable;
 
     Counters.Counter private _tokenIds;
     // The max number of NFTs in the collection 7 representing Africa, Asia, Europe, North America, South America, Australia, and Antarctica
     uint256 public constant MAX_SUPPLY = 7;
 
-    uint256 public teamFeePercentage = 5; // 5%
+    uint256 public teamFee = 0.01 ether;
 
     string public baseTokenURI;
 
@@ -29,9 +30,12 @@ contract ContinentToken is ERC721Enumerable, Ownable {
     mapping(uint256 => Continent) public continents;
 
 
+    event ContinentCreated(uint256 indexed tokenId, string name, string metadataURI);
     event CitizenshipPurchased(uint256 indexed tokenId, address indexed citizen);
+    event ContinentTransfered(address indexed from, address indexed to, uint256 indexed tokenId);
 
-    constructor(string memory name, string memory symbol) ERC721(name, symbol) {
+    constructor(string memory name, string memory symbol, string memory _baseTokenURI) ERC721(name, symbol) {
+        baseTokenURI = _baseTokenURI;
         _initializeContinents();
     }
 
@@ -46,72 +50,83 @@ contract ContinentToken is ERC721Enumerable, Ownable {
     }
 
     function _createContinent(string memory _name, string memory _metadataURI) private {
+        require(_tokenIds.current() < MAX_SUPPLY, "Max supply reached");
+
         _tokenIds.increment();
         uint256 tokenId = _tokenIds.current();
-
-        require(tokenId <= MAX_SUPPLY, "The continent collection is fully minted!");
-
-        continents[tokenId] = Continent(_name, _metadataURI, address(0), new address[](0));
         _safeMint(address(this), tokenId);
+
+        continents[tokenId] = Continent({
+            name: _name,
+            metadataURI: _metadataURI,
+            owner: address(this),
+            citizens: new address[](0),
+            citizenTax: 0
+        });
+
+        emit ContinentCreated(tokenId, _name, _metadataURI);
     }
 
-    function transferContinent(uint256 _tokenId, address _to) external {
-        require(_to != address(0), "Invalid address");
-        require(_to != ownerOf(_tokenId), "Cannot transfer to the current owner");
-        require(_to != address(this), "Cannot transfer to the contract itself");
-        require(msg.sender == ownerOf(_tokenId), "Not the owner of the continent");
-    
-        // Transfer the continent to the new owner
-        address tokenOwner = ownerOf(_tokenId);
-        safeTransferFrom(tokenOwner, _to, _tokenId);
+    function transferContinent(uint256 _tokenId, address _to) external payable {
+        require(ownerOf(_tokenId) == msg.sender, "You are not the owner of this continent");
+        require(msg.value >= teamFee, "Not enough Ether sent to cover team fee");
+        
+        _transfer(ownerOf(_tokenId), _to, _tokenId);
 
-        // Transfer team fee to the contract owner
-        address payable teamFeeRecipient = payable(owner());
-        uint256 teamFee = (teamFeePercentage * continents[_tokenId].citizens.length) / 100;
-        teamFeeRecipient.sendValue(teamFee);
+        if(msg.sender != owner()){
+            require(owner().sendValue(teamFee), "Transfer failed");
+        }
 
         continents[_tokenId].owner = _to;
 
-        emit ContinentTransferred(_tokenId, tokenOwner, _to);
+        emit ContinentTransfered(ownerOf(_tokenId), _to, _tokenId);
     }
 
-    function getAllContinents() external view returns (address[] memory) {
-        return continents;
+    function getAllContinents() public view returns (uint256[] memory, string[] memory, string[] memory, address[] memory, uint256[] memory) {
+        uint256 totalContinents = totalSupply();
+        uint256[] memory tokenIds = new uint256[](totalContinents);
+        string[] memory names = new string[](totalContinents);
+        string[] memory metadataURIs = new string[](totalContinents);
+        address[] memory owners = new address[](totalContinents);
+        uint256[] memory citizenTaxes = new uint256[](totalContinents);
+
+        for (uint256 i = 0; i < totalContinents; i++) {
+            tokenIds[i] = tokenByIndex(i);
+            names[i] = continents[tokenIds[i]].name;
+            metadataURIs[i] = continents[tokenIds[i]].metadataURI;
+            owners[i] = continents[tokenIds[i]].owner;
+            citizenTaxes[i] = continents[tokenIds[i]].citizenTax;
+        }
+
+        return (tokenIds, names, metadataURIs, owners, citizenTaxes);
+    }
+
+    function getContinentOwner(uint256 _tokenId) external view returns (address) {
+        return ownerOf(_tokenId);
     }
 
     function buyCitizenship(uint256 _tokenId) external payable {
         require(ownerOf(_tokenId) != address(0), "Continent does not exist");
-        require(msg.value == continents[_tokenId].citizenTax, "Not enough ether to purchase citizenship");
+        require(ownerOf(_tokenId) != msg.sender, "You already own this continent");
+        require(msg.value >= continents[_tokenId].citizenTax, "Not enough Ether sent to cover citizenship tax");
 
-        address tokenOwner = ownerOf(_tokenId);
-        require(tokenOwner.sendValue(fee), "Transfer failed");
-
+        payable(ownerOf(_tokenId)).sendValue(msg.value);
         continents[_tokenId].citizens.push(msg.sender);
 
         emit CitizenshipPurchased(_tokenId, msg.sender);
     }
 
-    function setCitizenshipTax(uint256 _tokenId, uint256 _citizenshipTax) external {
-        require(ownerOf(_continentId) == msg.sender, "You are not the owner of this continent");
-        continents[_tokenId].citizenshipTax = _citizenshipTax;
-    }
+    function setCitizenTax(uint256 _tokenId, uint256 _citizenTax) external {
+        require(ownerOf(_tokenId) == msg.sender, "You are not the owner of this continent");
+        continents[_tokenId].citizenTax = _citizenTax;
+    } 
 
     function getCitizens(uint256 _tokenId) external view returns (address[] memory) {
         return continents[_tokenId].citizens;
     }
 
-    function setTeamFeePercentage(uint256 _newTeamFeePercentage) external onlyOwner {
-        require(_newTeamFeePercentage <= 100, "Percentage must be less than or equal to 100");
-        teamFeePercentage = _newTeamFeePercentage;
-    }
-    
-    // Withdraw the ether in the contract
-    function withdrawTeamFee() public payable onlyOwner {
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No ether left to withdraw");
-
-        (bool success, ) = (msg.sender).call{value: balance}("");
-        require(success, "Transfer failed.");
+    function setTeamFee(uint256 _newTeamFee) external onlyOwner {
+        teamFee = _newTeamFee;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
