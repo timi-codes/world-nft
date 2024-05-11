@@ -44,7 +44,7 @@ contract ContinentAuction is Ownable {
 
     function createAuction(uint256 _tokenId, uint256 _startPrice, uint256 _bidIncrement, uint256 _startTime, uint256 _endTime) public onlyOwner {
 
-        require(continentTokenContract.ownerOf(_tokenId) == address(this), "Continent not in contract");
+        require(continentTokenContract.ownerOf(_tokenId) == address(continentTokenContract), "Continent not in contract");
         require(auctions[_tokenId].endTime == 0, "Auction already exists");
         require(_startTime < _endTime, "Invalid start and end time");
         require(_endTime > block.timestamp, "End time must be in the future");
