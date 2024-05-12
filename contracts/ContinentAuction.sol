@@ -71,7 +71,7 @@ contract ContinentAuction is Ownable {
         auctions[_tokenId].ended = true;
         emit AuctionEnded(auctions[_tokenId].highestBidder, _tokenId, auctions[_tokenId].highestBid);
 
-        continentTokenContract.transferContinent(_tokenId, auctions[_tokenId].highestBidder);
+        continentTokenContract.transferTokenFromContract(_tokenId, auctions[_tokenId].highestBidder);
     }   
 
     function placeBid(uint256 _tokenId) public payable {
