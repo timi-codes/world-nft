@@ -76,10 +76,11 @@ contract ContinentToken is ERC721Enumerable, Ownable {
     }
 
     function transferContinent(uint256 _tokenId, address _to) external payable {
-        require(ownerOf(_tokenId) == msg.sender, "You are not the owner of this continent");
+        address previousOwner = ownerOf(_tokenId);
+        require(previousOwner == msg.sender, "You are not the owner of this continent");
         require(msg.value >= teamFee, "Not enough Ether sent to cover team fee");
         
-        _transfer(ownerOf(_tokenId), _to, _tokenId);
+        _transfer(previousOwner, _to, _tokenId);
 
         if(msg.sender != owner()){
             Address.sendValue(payable(owner()), teamFee);
@@ -87,7 +88,7 @@ contract ContinentToken is ERC721Enumerable, Ownable {
 
         continents[_tokenId].owner = _to;
 
-        emit ContinentTransfered(ownerOf(_tokenId), _to, _tokenId);
+        emit ContinentTransfered(previousOwner, _to, _tokenId);
     }
 
     function getAllContinents() public view returns (uint256[] memory, string[] memory, string[] memory, address[] memory, uint256[] memory) {
