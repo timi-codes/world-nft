@@ -1,4 +1,6 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
+
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -12,10 +14,12 @@ contract ContinentAuction is Ownable {
 
     uint256 public constant MAX_PURCHASE_PER_WALLET = 1;
 
+    enum AuctionStatus { Pending, Open, Closed }
+
     struct Auction {
         uint256 tokenId; // id of the auction token 
         uint256 bidIncrement; // the minimum bid increment
-        bool ended;
+        AuctionStatus status; // the status of the auction (Pending, Open, Closed)
 
         uint256 highestBid; // the current highest bid amount
         mapping(address => BidItem[]) bids; // the auction bids
@@ -42,41 +46,36 @@ contract ContinentAuction is Ownable {
         continentTokenContract = ContinentToken(_continentToken);
     }
 
-    function createAuction(uint256 _tokenId, uint256 _startPrice, uint256 _bidIncrement, uint256 _startTime, uint256 _endTime) public onlyOwner {
+    function createAuction(uint256 _tokenId, uint256 _startPrice, uint256 _bidIncrement, uint256 _duration) public onlyOwner {
+
+        uint256 endTime = (block.timestamp + _duration);
 
         require(continentTokenContract.ownerOf(_tokenId) == address(continentTokenContract), "Continent not in contract");
-        require(auctions[_tokenId].endTime == 0, "Auction already exists");
-        require(_startTime < _endTime, "Invalid start and end time");
-        require(_endTime > block.timestamp, "End time must be in the future");
+        require(auctions[_tokenId].endTime == 0 && auctions[_tokenId].status != AuctionStatus.Open, "Auction already exists");
+        require(endTime > block.timestamp, "End time must be in the future");
 
         auctions[_tokenId].tokenId = _tokenId;
         auctions[_tokenId].bidIncrement = _bidIncrement;
-        auctions[_tokenId].ended = false;
-        auctions[_tokenId].highestBid = _startPrice;
+        auctions[_tokenId].highestBid = _startPrice; 
         auctions[_tokenId].highestBidder = address(0);
-        auctions[_tokenId].startTime = _startTime;
-        auctions[_tokenId].endTime = _endTime;
+        auctions[_tokenId].startTime = block.timestamp;
+        auctions[_tokenId].endTime = endTime;
+        auctions[_tokenId].status = AuctionStatus.Open;
 
-        emit AuctionStarted(_tokenId, _startTime, _endTime);
+        emit AuctionStarted(_tokenId, auctions[_tokenId].startTime, auctions[_tokenId].endTime);
     }
 
-    function getAuction(uint256 _tokenId) public view returns (uint256, uint256, uint256, uint256, uint256, bool, address) {
-        return (_tokenId, auctions[_tokenId].bidIncrement, auctions[_tokenId].highestBid, auctions[_tokenId].startTime, auctions[_tokenId].endTime, auctions[_tokenId].ended, auctions[_tokenId].highestBidder);
+    function setAuctionStatus(uint256 _tokenId, AuctionStatus _status) public onlyOwner {
+        auctions[_tokenId].status = _status;
     }
 
-    function endAuction(uint256 _tokenId) public onlyOwner {
-        require(auctions[_tokenId].endTime > 0, "Auction not started");
-        require(block.timestamp >= auctions[_tokenId].endTime, "Auction not ended yet");
-
-        auctions[_tokenId].ended = true;
-        emit AuctionEnded(auctions[_tokenId].highestBidder, _tokenId, auctions[_tokenId].highestBid);
-
-        continentTokenContract.transferTokenFromContract(_tokenId, auctions[_tokenId].highestBidder);
-    }   
+    function getAuction(uint256 _tokenId) public view returns (uint256, uint256, uint256, uint256, uint256, AuctionStatus, address) {
+        return (_tokenId, auctions[_tokenId].bidIncrement, auctions[_tokenId].highestBid, auctions[_tokenId].startTime, auctions[_tokenId].endTime, auctions[_tokenId].status, auctions[_tokenId].highestBidder);
+    }
 
     function placeBid(uint256 _tokenId) public payable {
 
-        require(auctions[_tokenId].endTime > 0, "Auction not started");
+        require(auctions[_tokenId].startTime < block.timestamp, "Auction not started");
         require(block.timestamp < auctions[_tokenId].endTime, "Auction ended");
         require(continentTokenContract.balanceOf(msg.sender) < MAX_PURCHASE_PER_WALLET, "Bidder already owns a continent");
 

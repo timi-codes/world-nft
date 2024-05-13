@@ -7,7 +7,6 @@ contract('ContinentToken', (accounts) => {
     let continentToken;
     const name = 'ContinentToken';
     const symbol = 'CNT';
-    const decimals = 18;
     const maxSupply = 7;
     const owner = accounts[0];
     const account1 = accounts[1];
@@ -20,7 +19,7 @@ contract('ContinentToken', (accounts) => {
     };
     
     beforeEach(async () => {
-        continentToken = await ContinentToken.new(name, symbol, decimals, { from: owner });
+        continentToken = await ContinentToken.new(name, symbol, { from: owner });
     });
     
     it('should have correct name', async () => {
