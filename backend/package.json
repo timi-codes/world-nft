@@ -1,0 +1,25 @@
+{
+  "name": "world-nft-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/timi-codes/world-nft",
+  "author": "David Timi Tejumola",
+  "license": "MIT",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
+    "build": "npx tsc"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.11",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  }
+}
