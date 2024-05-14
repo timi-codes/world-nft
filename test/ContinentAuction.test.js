@@ -19,7 +19,7 @@ contract('ContinentAuction', (accounts) => {
     const bidIncrement = web3.utils.toWei("0.1", "ether");
     const duration = 3600; // 1 hr
 
-    before(async () => {
+    beforeEach(async () => {
         continentToken = await ContinentToken.new("ContinentToken", "CNT", "", { from: owner });
         continentAuction = await ContinentAuction.new(continentToken.address, { from: owner });
     });
@@ -72,44 +72,88 @@ contract('ContinentAuction', (accounts) => {
 
         });
 
-        it('should not end an auction if not started', async () => { 
-            await expectRevert(
-                continentAuction.endAuction(AFRICA_TOKEN.token_id, { from: owner }),
-                'Auction not started'
-            );
-        });
-
-        it.only('should end an auction', async () => {
-            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, duration, { from: owner });
-            const { logs } = await continentAuction.endAuction(AFRICA_TOKEN.token_id, { from: owner });
-
-            assert.equal(logs[0].event, 'AuctionEnded');
-            assert.equal(logs[0].args.winner, '0x' + '0'.repeat(40));
-            assert.equal(logs[0].args.tokenId, AFRICA_TOKEN.token_id);
-            assert.equal(logs[0].args.amount.toString(), startPrice);
-        });
     });
 
     describe('Bidding', () => {
-        it('should not bid if auction is not ongoing', async () => {
-            const startTime = Math.floor(Date.now() / 1000) + 3600; // 1 hr from now
-            const endTime = startTime + 3600; // 1 hr after start time
-            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, startTime, endTime, { from: owner });
+        it('should not bid if auction is not open', async () => {
+            const oneSecDuration = 1; // 1 sec
+
+            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, oneSecDuration, { from: owner });
+            await new Promise(resolve => setTimeout(resolve, 2000)); // wait for auction to end
+
+            const bidAmount = web3.utils.toBN(startPrice).add(web3.utils.toBN(bidIncrement));
 
             await expectRevert(
-                continentAuction.placeBid(AFRICA_TOKEN.token_id, { from: bidder1, value: startPrice }),
-                'Auction not started'
+                continentAuction.placeBid(AFRICA_TOKEN.token_id, { from: bidder1, value: bidAmount.toString() }),
+                'Auction ended or not started'
             );
         });
 
-        it('should not bid if auction is ended', async () => {
-            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, startTime, endTime, { from: owner });
-            await continentAuction.endAuction(AFRICA_TOKEN.token_id, { from: owner });
+        it('should not place bid if owner already owns a continent', async () => { 
+            await continentToken.transferTokenFromContract(AFRICA_TOKEN.token_id, bidder1, { from: owner });
+            const asiaTokenId = 2;
+            await continentAuction.createAuction(asiaTokenId, startPrice, bidIncrement, duration, { from: owner });
+
+            await expectRevert(
+                continentAuction.placeBid(asiaTokenId, { from: bidder1, value: startPrice }),
+                'You already own a continent'
+            );
+        });
+
+        it('bid should be higher than current bid', async () => { 
+            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, duration, { from: owner });
 
             await expectRevert(
                 continentAuction.placeBid(AFRICA_TOKEN.token_id, { from: bidder1, value: startPrice }),
-                'Auction ended'
+                'Bid must be higher than current bid by at least the bid increment'
             );
         });
+
+        it('should place bid successfully', async () => { 
+            const bidAmount = web3.utils.toBN(startPrice).add(web3.utils.toBN(bidIncrement));
+
+            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, duration, { from: owner });
+
+            const { logs } = await continentAuction.placeBid(AFRICA_TOKEN.token_id, { from: bidder1, value: bidAmount.toString() });
+
+            assert.equal(logs[0].event, 'BidPlaced');
+            assert.equal(logs[0].args.tokenId, AFRICA_TOKEN.token_id);
+            assert.equal(logs[0].args.bidder, bidder1);
+            assert.equal(logs[0].args.amount.toString(), bidAmount.toString());
+        });
+
+        it('should update auctions with highest bid', async () => { 
+            const bidAmount = web3.utils.toBN(startPrice).add(web3.utils.toBN(bidIncrement));
+
+            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, duration, { from: owner });
+            await continentAuction.placeBid(AFRICA_TOKEN.token_id, { from: bidder2, value: bidAmount.toString() });
+
+            const auction = await continentAuction.getAuction(AFRICA_TOKEN.token_id);
+            const bids = await continentAuction.getBids(AFRICA_TOKEN.token_id);
+
+            assert.equal(auction[2].toString(), bidAmount.toString());
+            assert.equal(auction[6], bidder2);
+
+            assert.equal(bids[0][0].toString(), bidAmount.toString());
+            assert.equal(bids[0][2], bidder2);
+        });
+
+        it('should refund previous highest bidder after new bid is placed', async () => {
+            const firstBidAmount = web3.utils.toBN(startPrice).add(web3.utils.toBN(bidIncrement));
+
+            await continentAuction.createAuction(AFRICA_TOKEN.token_id, startPrice, bidIncrement, duration, { from: owner });
+            await continentAuction.placeBid(AFRICA_TOKEN.token_id, { from: bidder1, value: firstBidAmount.toString() });
+            const initialBalanceOfBidder1 = await web3.eth.getBalance(bidder1);
+
+            const secondBidAmount = web3.utils.toBN(firstBidAmount).add(web3.utils.toBN(bidIncrement));
+            await continentAuction.placeBid(AFRICA_TOKEN.token_id, { from: bidder2, value: secondBidAmount.toString() });
+
+            const finalBalanceOfBidder1 = await web3.eth.getBalance(bidder1);
+            const expectedBalanceOfBidder1 = web3.utils.toBN(initialBalanceOfBidder1).add(web3.utils.toBN(firstBidAmount));
+
+            assert.equal(expectedBalanceOfBidder1.toString(), finalBalanceOfBidder1, "Previous highest bidder balance incorrect");
+
+        });
+
     });
 });

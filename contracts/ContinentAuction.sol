@@ -22,7 +22,7 @@ contract ContinentAuction is Ownable {
         AuctionStatus status; // the status of the auction (Pending, Open, Closed)
 
         uint256 highestBid; // the current highest bid amount
-        mapping(address => BidItem[]) bids; // the auction bids
+        BidItem[] bids; // the auction bids
         address highestBidder; // the account with the current highest bid
 
         uint256 startTime; // the time the auction started
@@ -32,13 +32,14 @@ contract ContinentAuction is Ownable {
     struct BidItem {
         uint256 amount; // bid price in wei
         uint256 timestamp; // timestamp of bid
+        address bidder; // address of bidder
     }
 
     mapping(uint256 => Auction) public auctions;
 
     ContinentToken public continentTokenContract;
 
-    event BidPlaced(address indexed bidder, uint256 tokenId, uint256 amount);
+    event BidPlaced(address indexed bidder, uint256 tokenId, uint256 amount, uint256 timestamp);
     event AuctionEnded(address indexed winner, uint256 tokenId, uint256 amount);
     event AuctionStarted(uint256 indexed tokenId, uint256 startTime, uint256 endTime);
 
@@ -75,9 +76,10 @@ contract ContinentAuction is Ownable {
 
     function placeBid(uint256 _tokenId) public payable {
 
-        require(auctions[_tokenId].startTime < block.timestamp, "Auction not started");
-        require(block.timestamp < auctions[_tokenId].endTime, "Auction ended");
-        require(continentTokenContract.balanceOf(msg.sender) < MAX_PURCHASE_PER_WALLET, "Bidder already owns a continent");
+        uint256 bidTime = block.timestamp;
+
+        require(bidTime < auctions[_tokenId].endTime, "Auction ended or not started");
+        require(continentTokenContract.balanceOf(msg.sender) < MAX_PURCHASE_PER_WALLET, "You already own a continent");
 
         uint256 nextMinimumBid = auctions[_tokenId].highestBid + auctions[_tokenId].bidIncrement;
         require(msg.value >= nextMinimumBid, "Bid must be higher than current bid by at least the bid increment");
@@ -91,16 +93,17 @@ contract ContinentAuction is Ownable {
         auctions[_tokenId].highestBid = msg.value;
         auctions[_tokenId].highestBidder = msg.sender;
 
-        auctions[_tokenId].bids[msg.sender].push(BidItem({
+        auctions[_tokenId].bids.push(BidItem({
             amount: msg.value,
-            timestamp: block.timestamp
+            timestamp: bidTime,
+            bidder: msg.sender
         }));
 
-        emit BidPlaced(msg.sender, _tokenId, msg.value);
+        emit BidPlaced(msg.sender, _tokenId, msg.value, bidTime);
     }
 
     function getBids(uint256 _tokenId) public view returns (BidItem[] memory) {
-         BidItem[] memory bids = auctions[_tokenId].bids[msg.sender];
+        BidItem[] memory bids = auctions[_tokenId].bids;
         return bids;
     }
 
