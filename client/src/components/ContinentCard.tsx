@@ -17,7 +17,7 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                 className={" relative p-4 px-6 bg-contain bg-[image:var(--image-url)]"}
             >
                 <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold opacity-95">{continent.name} #{continent.token_id}</h2>
+                    <h2 className="text-2xl font-bold opacity-80">{continent.name} #{continent.token_id}</h2>
                     <CountDown />
                 </div>
                 <Tilt>
@@ -27,7 +27,7 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                 </Tilt>
                 <div role="button" className='flex justify-between items-center absolute bg-white rounded-full text-black text-[10px] pl-2 pr-1 py-[3px] bottom-3 left-[10px] shadow-md'>
                     <span>View Bids</span>
-                    <div className='flex justify-center items-center  bg-[#27282B] border border-[0.5] border-[#2F3033] rounded-full text-white ml-1 w-5 h-5 text-center'>+4</div>
+                    <div className='flex justify-center items-center text-[9px] bg-[#27282B] border border-[0.5] border-[#2F3033] rounded-full text-white ml-1 w-5 h-5 text-center'>+4</div>
                 </div>
             </div>
             <div className="border-b border-[0.5] border-[#545454]/20"></div>

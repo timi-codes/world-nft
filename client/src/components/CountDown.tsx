@@ -1,7 +1,6 @@
 import React from 'react';
 
 
-//flex text-xs p-2 items-center justify-between bg-[#27282B] border border-[0.5] border-[#2F3033] rounded-full w-8 h-8
 const CountDown = () => { 
     return (
         <div className='flex space-x-2'>
