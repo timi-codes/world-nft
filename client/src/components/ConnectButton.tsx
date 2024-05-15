@@ -8,7 +8,7 @@ const ConnectButton = () => {
         <ConnectKitButton.Custom>
             {({ isConnected, isConnecting, show, hide, address, ensName, chain }) => {
                 return (
-                    <button onClick={show} className="px-7 py-3 text-black/70 bg-white rounded-full text-[12px] font-medium">
+                    <button role="button" onClick={show} className="px-7 py-3 text-black/70 bg-white rounded-full text-[12px] font-medium hover:bg-opacity-90">
                         {isConnected ? address : "Connect Wallet"}
                     </button>
                 );

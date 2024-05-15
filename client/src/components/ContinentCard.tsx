@@ -9,15 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Continent } from '@/app/page';
 
 const ContinentCard = ({ continent }: { continent: Continent }) => { 
-
     return (
-        <section className="w-[420px] rounded-md bg-black/30 shadow-md continent-card" >
+        <section className="w-[420px] rounded-md bg-black/30 shadow-md" >
             <div
-                style={{ '--image-url': `url(${continent.bg_image})` }} 
+                style={{ '--image-url': `url(${continent.bg_image})` } as React.CSSProperties} 
                 className={" relative p-4 px-6 bg-contain bg-[image:var(--image-url)]"}
             >
                 <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold opacity-80">{continent.name} #{continent.token_id}</h2>
+                    <h2 className="text-xl font-bold opacity-80">{continent.name} #{continent.token_id}</h2>
                     <CountDown />
                 </div>
                 <Tilt>
