@@ -6,7 +6,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "truffle test",
+    "deploy-metadata": "node scripts/deploy_metadata_local_node.mjs"
   },
   "repository": {
     "type": "git",
@@ -20,10 +21,15 @@
   },
   "homepage": "https://github.com/truffle-box/nft-box#readme",
   "dependencies": {
+    "@helia/json": "^3.0.4",
+    "@helia/strings": "^3.0.4",
+    "@helia/unixfs": "^3.0.6",
     "@openzeppelin/contracts": "^4.5.0",
     "@openzeppelin/test-helpers": "^0.5.16",
     "dotenv": "^16.0.0",
-    "typescript": "^4.6.4"
+    "helia": "^4.2.1",
+    "typescript": "^4.6.4",
+    "undici": "^6.16.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.31"
