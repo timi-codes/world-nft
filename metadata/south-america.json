@@ -1,0 +1,34 @@
+    {
+        "name": "South America",
+        "description": "South America is a continent entirely in the Western Hemisphere and mostly in the Southern Hemisphere, with a relatively small portion in the Northern Hemisphere. It can also be described as the southern subcontinent of the Americas. The reference to South America instead of other cultural or geographical regions has increased in recent decades due to changing geopolitical dynamics.",
+        "attributes": {
+            "population": "430 million",
+            "area": "17,840,000 km2",
+            "density": "24.1/km2",
+            "languages": "Spanish, Portuguese, English, Dutch",
+            "religions": "Christianity, Irreligion",
+            "time_zones": "UTC−5 to UTC−2",
+            "largest_cities": "São Paulo, Buenos Aires, Rio de Janeiro, Bogotá, Lima"
+        },
+        "countries": [
+            "Argentina",
+            "Bolivia",
+            "Brazil",
+            "Chile",
+            "Colombia",
+            "Ecuador",
+            "Guyana",
+            "Paraguay",
+            "Peru",
+            "Suriname",
+            "Uruguay",
+            "Venezuela"
+        ],
+        "cities": [
+            "São Paulo",
+            "Buenos Aires",
+            "Rio de Janeiro",
+            "Bogotá",
+            "Lima"
+        ]
+    }

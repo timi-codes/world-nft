@@ -1,0 +1,36 @@
+    {
+        "name": "Oceania",
+        "description": "Oceania is a geographic region that includes Australasia, Melanesia, Micronesia, and Polynesia. Spanning the eastern and western hemispheres, Oceania has a land area of 8,525,989 square kilometers (3,291,903 sq mi) and a population of over 41 million. When compared to continents, the region of Oceania is the smallest in land area and the second smallest in population after Antarctica.",
+        "attributes": {
+            "population": "41 million",
+            "area": "8,525,989 km2",
+            "density": "4.8/km2",
+            "languages": "English, French, Spanish, Hawaiian, Tahitian",
+            "religions": "Christianity, Indigenous religions",
+            "time_zones": "UTC+6 to UTC+12",
+            "largest_cities": "Sydney, Melbourne, Brisbane, Auckland, Honolulu"
+        },
+        "countries": [
+            "Australia",
+            "Fiji",
+            "Kiribati",
+            "Marshall Islands",
+            "Micronesia",
+            "Nauru",
+            "New Zealand",
+            "Palau",
+            "Papua New Guinea",
+            "Samoa",
+            "Solomon Islands",
+            "Tonga",
+            "Tuvalu",
+            "Vanuatu"
+        ],
+        "cities": [
+            "Sydney",
+            "Melbourne",
+            "Brisbane",
+            "Auckland",
+            "Honolulu"
+        ]
+    }
