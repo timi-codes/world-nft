@@ -36,7 +36,7 @@ contract('ContinentToken', (accounts) => {
         it('should mint continents on contract creation', async () => {
             const continentData = await continentToken.getAllContinents();
             assert.equal(continentData[0].length, maxSupply);
-            assert.equal(continentData[1][0], AFRICA_TOKEN.name);
+            assert.equal(continentData[1][0], `${AFRICA_TOKEN.name} #${AFRICA_TOKEN.token_id}`);
 
             const ownerOfAfrica = await continentToken.ownerOf(AFRICA_TOKEN.token_id);
             assert.equal(ownerOfAfrica, continentToken.address);

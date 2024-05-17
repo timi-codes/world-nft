@@ -48,7 +48,7 @@ contract ContinentAuction is Ownable {
     }
 
     function createAuction(uint256 _tokenId, uint256 _startPrice, uint256 _bidIncrement, uint256 _duration) public onlyOwner {
-
+        
         uint256 endTime = (block.timestamp + _duration);
 
         require(continentTokenContract.ownerOf(_tokenId) == address(continentTokenContract), "Continent not in contract");

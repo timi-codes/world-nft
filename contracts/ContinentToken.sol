@@ -12,6 +12,9 @@ contract ContinentToken is ERC721Enumerable, Ownable {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     using Address for address payable;
+    using Strings for uint256;
+    using Strings for uint8;
+
 
     Counters.Counter private _tokenIds;
     // The max number of NFTs in the collection 7 representing Africa, Asia, Europe, North America, South America, Australia, and Antarctica
@@ -42,16 +45,16 @@ contract ContinentToken is ERC721Enumerable, Ownable {
     }
 
     function _initializeContinents() private {
-        _createContinent("Africa", "ipfs://QmXup9MMVfLpwNhT7D1cWTnqioKXhKm9MtzqkGkFczBf9d");
-        _createContinent("Asia", "ipfs://QmWzjUfTMERpJ1eSJekV1gM8W2sXgHPFfW5PfTTN5PJKkW");
-        _createContinent("Europe", "ipfs://QmYfnw9U1V8y2c6cNUrjM7E15RkTR5urCgHrBn8aFg9muK");
-        _createContinent("North America", "ipfs://Qmaz5vYVc4YNARcvQQyJQFKs2m7ZzFbDNwufVgA5GZyryY");
-        _createContinent("South America", "ipfs://QmUanE2fbAdMxAWt7eok7AG9FtDcWQGxue7yMdoBkN6j3X");
-        _createContinent("Australia", "ipfs://QmZ6QuYUCi3z3YqBuV8X1p7vqJt7cPyYNEJ6M6WjAFkbvS");
-        _createContinent("Antarctica", "ipfs://QmNqznNNymXDJ4T1soN2M9hDhzUxmxTFzJ5V8EQ6q2vzRe");
+        _createContinent("Africa");
+        _createContinent("Antarctica");
+        _createContinent("Asia");
+        _createContinent("Europe");
+        _createContinent("North America");
+        _createContinent("Oceania");
+        _createContinent("South America");
     }
 
-    function _createContinent(string memory _name, string memory _metadataURI) private {
+    function _createContinent(string memory _name) private {
         require(_tokenIds.current() < MAX_SUPPLY, "Max supply reached");
 
         _tokenIds.increment();
@@ -59,14 +62,14 @@ contract ContinentToken is ERC721Enumerable, Ownable {
         _safeMint(address(this), tokenId);
 
         continents[tokenId] = Continent({
-            name: _name,
-            metadataURI: _metadataURI,
+            name: string(abi.encodePacked(_name, " #", tokenId.toString())),
+            metadataURI: tokenURI(tokenId),
             owner: address(this),
             citizens: new address[](0),
             citizenTax: 0
         });
 
-        emit ContinentCreated(tokenId, _name, _metadataURI);
+        emit ContinentCreated(tokenId, _name, tokenURI(tokenId));
     }
 
     function transferTokenFromContract(uint256 _tokenId, address _to) external onlyOwner {
@@ -146,6 +149,15 @@ contract ContinentToken is ERC721Enumerable, Ownable {
 
     function setBaseURI(string memory _baseTokenURI) public onlyOwner {
         baseTokenURI = _baseTokenURI;
+    }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory){
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+
+        string memory currentBaseURI = _baseURI();
+        return bytes(currentBaseURI).length > 0
+            ? string(abi.encodePacked(currentBaseURI, tokenId.toString(), ".json"))
+            : "";
     }
 
     function withdraw() external onlyOwner {
