@@ -1,44 +1,98 @@
 import { createHelia } from 'helia';
-import { json } from '@helia/json'
-import { unixfs } from '@helia/unixfs'
+import { unixfs as createUnixfs } from '@helia/unixfs'
+import { LevelDatastore } from 'datastore-level'
 import { promises as fsPromises } from 'fs'
+import fs from "fs";
+import Path from "path";
 
-const helia = await createHelia();
-const fs = unixfs(helia)
+const datastore = new LevelDatastore('.ipfs-ds')
+await datastore.open()
 
-console.log('Helia node created', helia.libp2p.peerId.toString());
+const heliaNode = await createHelia();
+const unixfs = createUnixfs(heliaNode);
 
-async function uploadImages(folderPath, parentDirCid = null) {
-    const images = await fsPromises.readdir(folderPath, { withFileTypes: true })
+console.log('Helia node created', heliaNode.libp2p.peerId.toString());
 
-    const dirCid = parentDirCid ? parentDirCid : await fs.addDirectory()
-    for (let image of images) { 
-        const itemPath = `${folderPath}/${image.name}`;
+async function uploadImages(folderPath) {
+    try {
+        const dirents = await fsPromises.readdir(folderPath, { withFileTypes: true });
+        let rootCid = await unixfs.addDirectory();
 
-        if (image.isFile()) {
-            const fileData = await fsPromises.readFile(itemPath)
-            console.log(image.name, fileData.length)
-            await fs.addBytes(fileData, dirCid, image.name)
-        }
+        // Loop through each image file in the folder
+        await Promise.all(dirents.map(async (dirent) => {
+            const imagePath = Path.join(folderPath, dirent.name);
+
+            const cid = dirent.isDirectory() ?
+                await uploadImages(imagePath) :
+                await unixfs.addFile({
+                    content: fs.createReadStream(imagePath, { highWaterMark: 16 * 1024 })
+                });
+
+            // Copy the file CID to the directory in IPFS
+            rootCid = await unixfs.cp(cid, rootCid, dirent.name);
+
+            console.log(`Uploaded ${dirent.name} to IPFS with CID: ${cid.toString()}`);
+
+        }));
+
+        console.log(`Image folder uploaded to IPFS with hash: ${rootCid.toString()}`);
+        return rootCid.toString();
+    } catch (error) {
+        console.error('Error uploading images:', error);
     }
-
-    console.log(`image folder uploaded to IPFS with hash: ${dirCid}`);
-    return dirCid.toString();
 }
 
-// Function to upload metadata from each continent from json file
-async function uploadJSON(continent, metadata) {
-    const buffer = Buffer.from(JSON.stringify(metadata));
-    const _json = json(helia)
-    const cid = await _json.add(buffer)
-    console.log(`${continent} metadata uploaded to IPFS with hash: ${cid}`);
-    return cid.toString();
+async function uploadMetadata(folderPath, imageCid) {
+    try {
+        const dirents = await fsPromises.readdir(folderPath, { withFileTypes: true });
+        let rootCid = await unixfs.addDirectory();
+
+        // Loop through each image file in the folder
+        await Promise.all(dirents.map(async (dirent, index) => {
+            const jsonPath = Path.join(folderPath, dirent.name);
+
+            let cid = '';
+            if (dirent.isDirectory()) { 
+                cid = await uploadMetadata(jsonPath)
+            } else {
+                const fileData = await fsPromises.readFile(jsonPath)
+                const json = JSON.parse(fileData)
+
+                // Update image path in metadata json
+                json.image = `ipfs://${imageCid.toString()}/${index + 1}.png`
+                await fsPromises.writeFile(jsonPath, JSON.stringify(json))
+
+                cid = await unixfs.addFile({
+                    content: fs.createReadStream(jsonPath, { highWaterMark: 16 * 1024 })
+                });
+            }
+
+            // Copy the file CID to the directory in IPFS
+            rootCid = await unixfs.cp(cid, rootCid, dirent.name);
+
+            console.log(`Uploaded ${dirent.name} to IPFS with CID: ${cid.toString()}`);
+
+        }));
+
+        console.log(`JSON folder uploaded to IPFS with hash: ${rootCid.toString()}`);
+        return rootCid.toString();
+    } catch (error) {
+        console.error('Error uploading images:', error);
+    }
 }
 
-//Upload images and metadata to IPFS for each continent
+
 async function main() {
-    // const continents = ['africa', 'south-america', 'north-america', 'antarctica', 'asia', 'europe', 'oceania'];
-    await uploadImages('./metadata/images');
+
+    const imageCid = await uploadImages('./metadata/images');
+    const baseUri = await uploadMetadata('./metadata/json', imageCid);
+    console.log(`Base URI: ${baseUri}`);
+
+
+    // process.on('exit', () => {
+    //     heliaNode.stop();
+    //     console.log('🛑 Helia node stopped');
+    // });
 }
 
 main();
