@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "truffle test",
-    "deploy-metadata": "node scripts/deploy_metadata_local_node.mjs"
+    "deploy-metadata": "node scripts/deploy_metadata.mjs"
   },
   "repository": {
     "type": "git",
@@ -22,11 +22,14 @@
   "homepage": "https://github.com/truffle-box/nft-box#readme",
   "dependencies": {
     "@helia/json": "^3.0.4",
+    "@helia/remote-pinning": "^1.2.0",
     "@helia/strings": "^3.0.4",
     "@helia/unixfs": "^3.0.6",
+    "@ipfs-shipyard/pinning-service-client": "^1.0.3",
     "@openzeppelin/contracts": "^4.5.0",
     "@openzeppelin/test-helpers": "^0.5.16",
-    "dotenv": "^16.0.0",
+    "datastore-level": "^10.1.8",
+    "dotenv": "^16.4.5",
     "helia": "^4.2.1",
     "typescript": "^4.6.4",
     "undici": "^6.16.1"
