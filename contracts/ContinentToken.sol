@@ -62,14 +62,14 @@ contract ContinentToken is ERC721Enumerable, Ownable {
         _safeMint(address(this), tokenId);
 
         continents[tokenId] = Continent({
-            name: string(abi.encodePacked(continentName, " #", tokenId.toString())),
+            name: string(abi.encodePacked(_name, " #", tokenId.toString())),
             metadataURI: tokenURI(tokenId),
             owner: address(this),
             citizens: new address[](0),
             citizenTax: 0
         });
 
-        emit ContinentCreated(tokenId, _name, _metadataURI);
+        emit ContinentCreated(tokenId, _name, tokenURI(tokenId));
     }
 
     function transferTokenFromContract(uint256 _tokenId, address _to) external onlyOwner {
