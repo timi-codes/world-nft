@@ -28,6 +28,7 @@
     "@ipfs-shipyard/pinning-service-client": "^1.0.3",
     "@openzeppelin/contracts": "^4.5.0",
     "@openzeppelin/test-helpers": "^0.5.16",
+    "@pinata/sdk": "^2.1.0",
     "@poanet/solidity-flattener": "^3.0.9",
     "@truffle/hdwallet-provider": "^2.1.15",
     "datastore-level": "^10.1.8",
