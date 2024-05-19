@@ -39,14 +39,14 @@ async function uploadImages(folderPath) {
                 await unixfs.addFile({
                     content: fs.createReadStream(imagePath, { highWaterMark: 16 * 1024 })
                 });
-            remotePinner.addPin({ cid })
+            // await remotePinner.addPin({ cid })
 
             // Copy the file CID to the directory in IPFS
             rootCid = await unixfs.cp(cid, rootCid, dirent.name);
 
             console.log(`Uploaded ${dirent.name} to IPFS with CID: ${cid.toString()}`);
         }));
-        remotePinner.addPin({ cid: rootCid })
+        // await remotePinner.addPin({ cid: rootCid })
 
         console.log(`Image folder uploaded to IPFS with hash: ${rootCid.toString()}`);
         return rootCid.toString();
@@ -73,13 +73,15 @@ async function uploadMetadata(folderPath, imageCid) {
 
                 // Update image path in metadata json
                 json.image = `ipfs://${imageCid.toString()}/${index + 1}.png`
+                json.external_url = `https://world-token.playstudio.ca/${index + 1}`
+
                 await fsPromises.writeFile(jsonPath, JSON.stringify(json))
 
                 cid = await unixfs.addFile({
                     content: fs.createReadStream(jsonPath, { highWaterMark: 16 * 1024 })
                 });
             }
-            remotePinner.addPin({ cid  })
+            // await remotePinner.addPin({ cid  })
 
             // Copy the file CID to the directory in IPFS
             rootCid = await unixfs.cp(cid, rootCid, dirent.name);
@@ -87,7 +89,7 @@ async function uploadMetadata(folderPath, imageCid) {
             console.log(`Uploaded ${dirent.name} to IPFS with CID: ${cid.toString()}`);
 
         }));
-        remotePinner.addPin({ cid: rootCid })
+        // await remotePinner.addPin({ cid: rootCid })
 
         console.log(`JSON folder uploaded to IPFS with hash: ${rootCid.toString()}`);
         return rootCid.toString();
@@ -102,6 +104,11 @@ async function main() {
         const imageCid = await uploadImages('./metadata/images');
         const baseUri = await uploadMetadata('./metadata/json', imageCid);
         console.log(`Base URI: ${baseUri}`);
+
+        let envFileContent = await fsPromises.readFile('.env', 'utf8');
+        envFileContent = envFileContent.replace(/^BASE_TOKEN_URI=.*$/m, `BASE_TOKEN_URI=ipfs://${baseUri}/`)
+        await fsPromises.writeFile(".env", envFileContent, 'utf8');
+
     } catch (error) {
         console.error('Error uploading metadata:', error);
         heliaNode.stop();
