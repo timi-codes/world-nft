@@ -3,18 +3,34 @@ import ContinentCard from "@/components/ContinentCard";
 import Image from "next/image";
 import React from "react";
 import ConnectButton from "@/components/ConnectButton";
-import { continents } from "@/constants";
+import useFetchContinents from "@/hooks/useFetchAuctions";
+import { time } from "console";
+import { Bidder } from "@/components/Bidders";
 
+export type EthereumAddress = `0x${string}`;
 export interface Continent { 
-  token_id: number;
+  tokenId: number;
   name: string;
   image: string;
+  owner: string;
   bg_image: string;
-  highest_bid: number;
-  highest_bidder: string;
+  auction: {
+    status: number,
+    highestBid: string,
+    bidIncrement: string,
+    highestBidder: string,
+    startTime: string,
+    endTime: string,
+    bids: Bidder[]
+  },
+  metadata: {
+    attributes: {trait_type: string, value: string}[]
+  }
 }
 
 export default function Home() {
+  const { data: continents } = useFetchContinents();
+  console.log(continents)
 
   return (
     <main className="flex h-screen overflow-hidden flex-col items-center justify-between p-24 p-8 z-[-1] place-items-center after:-top-40 after:-left-52 after:rounded-full after:absolute after:-z-20 after:h-[400px] after:w-[400px] after:translate-x-1/3 after:bg-[#7D49EA]/15  after:content-[''] after:blur-2xl before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-['']  before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#7D49EA] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[400px] before:lg:h-[360px] before:-bottom-40 before:right-0 before:hidden">
@@ -31,11 +47,10 @@ export default function Home() {
           Collect unique NFTs representing Africa, Asia, Europe, North America, South America, Australia, and Antarctica
         </p>
       </div>
-
-      <div className="flex space-x-8 overflow-x-auto">
+      <div className="flex wrap space-x-8 overflow-x">
         {
-          continents.map((continent) => (
-            <ContinentCard continent={continent} key={continent.token_id} />
+          continents && continents.slice(0, 3).map((continent: Continent) => (
+            <ContinentCard continent={continent} key={continent.tokenId} />
           ))
         }
       </div>
