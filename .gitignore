@@ -3,3 +3,5 @@ build
 dist
 .ipfs-ds
 .env
+./backend/.env
+./client/.env
