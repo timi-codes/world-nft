@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Web3Provider } from "@/providers/Web3Provider";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +18,8 @@ export default function RootLayout({
 
       <body>
         <Web3Provider>
-          {children}
+          <main>{children}</main>
+          <Toaster />
         </Web3Provider>
       </body>
     </html>
