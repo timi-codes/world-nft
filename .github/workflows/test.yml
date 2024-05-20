@@ -1,19 +1,19 @@
-on:
-  pull_request:
-    branches: [ main ]
+name: Run tests
+
+on: [push, pull_request]
+
+env:
+  IMAGE_TAG: your-dockerhub-username/truffle-image
 
 jobs:
   test:
-    name: run contract tests
+    name: Docker build and test
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Run tests in Docker container
         run: |
-            yarn global add truffle
-            yarn install
-
-      - name: Run tests
-        run: yarn test
+          docker pull $IMAGE_TAG
+          docker run --rm $IMAGE_TAG sh -c 'truffle test --network development'
