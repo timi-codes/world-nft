@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   IMAGE_TAG: world-token
-  GANACHE_IMAGE: david959/ganache-image:v1
+  GANACHE_IMAGE: david9595/ganache-image:v1
 
 jobs:
   test:
