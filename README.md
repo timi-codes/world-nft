@@ -7,7 +7,7 @@ This collection is made of up world's continents (Africa, Asia, Europe, North Am
     - `/auctions` - merged token data from zora indexer and contract data to display the list of continents.
     - `/citizenship/join` - api to join a continent as a citizen after auction. transaction should be signed on the dapp and signed transaction hash is send to the backend to be executed.
 
-## [Frontend DAPP](https://world-fuuwthp9z-timi-tejumolas-projects.vercel.app/)
+## [Frontend DAPP](https://world-q67k4f32u-payscout.vercel.app/)
     The frontend showcases a public english auction where the highest bidder automatically wins the token after the deadline  
     - Tools used - Wagmi, Connectkits, Viem, ReactQuery
 
