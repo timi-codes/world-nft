@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 env:
   IMAGE_TAG: world-token
-  GANACHE_IMAGE: david9595/ganache-image:v1
 
 jobs:
   test:
@@ -12,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       ganache:
-        image: $GANACHE_IMAGE
+        image: david9595/ganache-image:v1
+        options: --name ganache
         ports:
           - 8545:8545
-        options: --name ganache
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
