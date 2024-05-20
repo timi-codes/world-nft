@@ -75,8 +75,8 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
                     bids: bids.map((bid: any) => ({ 
                         amount: convertToNumber(bid[0]),
                         timestamp: new Date(convertToNumber(bid[1]) * 1000),
-                        address: convertToNumber(bid[2])
-                })).sort((a: any, b: any) => b.amount - a.amount)
+                        address: bid[2]
+                    })).sort((a: any, b: any) => b.amount - a.amount)
                 },
                 citizenTax: convertToNumber(continent.citizenTax),
                 citizens: continent.citizens
