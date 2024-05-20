@@ -12,7 +12,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-            yarn install truffle -g
+            yarn global add truffle
 
       - name: Run tests
         run: yarn test
