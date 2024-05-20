@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import Web3 from 'web3'
-import auctionBuild from "@contracts/build/ContinentAuction.json";
-import continentBuild from "@contracts/build/ContinentToken.json";
+import auctionBuild from "../contracts/ContinentAuction.json";
+import continentBuild from "../contracts/ContinentToken.json"
 import { AbiItem } from 'web3-utils';
 import { gqlFetch } from "./utils";
 import { GET_CONTRACT_TOKENS, ZORA_CLIENT_URL } from "../constants";
