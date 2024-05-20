@@ -13,7 +13,8 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v2
 
-      - name: Run tests in Docker container
-        run: |
-          docker pull $IMAGE_TAG
-          docker run --rm $IMAGE_TAG sh -c 'truffle test --network development'
+      - name: Build the Docker image
+        run: docker build -t $IMAGE_TAG --target=create-build .
+
+      - name: Run tests
+        run: docker run $IMAGE_TAG sh -c 'yarn test'
