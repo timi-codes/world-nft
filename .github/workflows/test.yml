@@ -22,4 +22,4 @@ jobs:
 
       - name: Run tests in Docker container
         run: |
-          docker run --rm --network="host" $IMAGE_TAG sh -c 'truffle test --network ganache'
+          docker run --rm --network="host" $IMAGE_TAG sh -c 'truffle test --network development'
