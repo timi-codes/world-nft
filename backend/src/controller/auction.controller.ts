@@ -6,6 +6,9 @@ import { AbiItem } from 'web3-utils';
 import { gqlFetch } from "./utils";
 import { GET_CONTRACT_TOKENS, ZORA_CLIENT_URL } from "../constants";
 
+
+const convertToNumber = (value: string) => Number(BigInt(value).toString());
+
 interface ResponseData {
     success: boolean;
     message: string;
@@ -14,12 +17,12 @@ interface ResponseData {
 }
 
 interface Auction {
-    status: number,
+    status: string,
     highestBid: string,
     bidIncrement: string,
     highestBidder: string,
-    startTime: number,
-    endTime: number,
+    startTime: string,
+    endTime: string,
     bids: any[]
 }
     
@@ -30,8 +33,8 @@ interface Token {
     owner: string;
     image: string;
     metadata: any;
-    citizenTax: string,
-    citizens: string[]
+    // citizenTax: string,
+    // citizens: string[]
 
 }
 
@@ -48,6 +51,8 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
         const { data: tokenData } = await response.json();
         const tokens = tokenData.tokens.nodes.map((node: any) => node.token);
 
+
+
         const auctions = await Promise.all(tokens.map(async (token: any) => { 
             const auction: Auction = await auctionContract.methods.auctions(Number(token.tokenId)).call();
             const bids: string[] = await auctionContract.methods.getBids(Number(token.tokenId)).call();
@@ -61,17 +66,21 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
                 image: token.image.url,
                 metadata: token.metadata,
                 auction: {
-                    status: auction.status,
-                    highestBid: auction.highestBid,
-                    bidIncrement: auction.bidIncrement,
-                    highestBidder: auction.highestBidder,
-                    startTime: auction.startTime > 0 ? new Date(auction.startTime * 1000) : null,
-                    endTime: auction.startTime > 0  ? new Date(auction.endTime * 1000) : null,
-                    bids: bids.map((bid: any) => ({ amount: bid[0], timestamp: new Date(bid[1] * 1000), address: bid[2] })).sort((a: any, b: any) => b.amount - a.amount)
+                    status: BigInt(auction.status).toString(),
+                    highestBid: BigInt(auction.highestBid).toString(),
+                    bidIncrement: BigInt(auction.bidIncrement).toString(),
+                    highestBidder: BigInt(auction.highestBidder).toString(),
+                    startTime: convertToNumber(auction.startTime) > 0 ? new Date(convertToNumber(auction.startTime) * 1000) : null,
+                    endTime: convertToNumber(auction.endTime) > 0 ? new Date(convertToNumber(auction.endTime) * 1000) : null,
+                    bids: bids.map((bid: any) => ({ 
+                        amount: convertToNumber(bid[0]),
+                        timestamp: new Date(convertToNumber(bid[1]) * 1000),
+                        address: convertToNumber(bid[2])
+                })).sort((a: any, b: any) => b.amount - a.amount)
                 },
-                citizenTax: continent.citizenTax,
+                citizenTax: convertToNumber(continent.citizenTax),
                 citizens: continent.citizens
-            } as Token
+            }
         }));
 
         return res.send({
