@@ -1,0 +1,14 @@
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: run contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+ 
+      - name: Run tests
+        run: yarn test
