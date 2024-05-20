@@ -3,7 +3,7 @@ name: Run tests
 on: [push, pull_request]
 
 env:
-  IMAGE_TAG: your-dockerhub-username/truffle-image
+  IMAGE_TAG: world-token
 
 jobs:
   test:
