@@ -6,7 +6,7 @@ const mnemonic = process.env.MNEMONIC;
 const alchemyKey = process.env.ALCHEMY_API_KEY;
 
 module.exports = {
-  contracts_build_directory: path.join(__dirname, "node_modules", "@contracts", "build"),
+  contracts_build_directory: path.join(__dirname, "client", "src", "contract", "build"),
   networks: {
     development: {
       host: "127.0.0.1",

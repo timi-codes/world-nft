@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Continent, EthereumAddress } from '@/app/page';
 import { shortenAddress, transformIPFSURL } from '@/utils';
 import { useWriteContract,  useSignMessage } from 'wagmi';
-import ContinentAuction from '@contracts/build/ContinentAuction.json'
+import ContinentAuction from '@/contract/build/ContinentAuction.json';
 import { formatEther, parseEther } from 'viem';
 import { toast } from 'sonner';
 import { Label } from './ui/label';
