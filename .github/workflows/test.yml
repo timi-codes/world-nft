@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build the Docker image
-        run: docker build -t $IMAGE_TAG --target=create-build .
+        run: docker build -t $IMAGE_TAG --target=truffle .
 
       - name: Run tests
         run: docker run $IMAGE_TAG sh -c 'yarn test'
