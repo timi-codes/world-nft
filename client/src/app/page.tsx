@@ -4,8 +4,8 @@ import Image from "next/image";
 import React from "react";
 import ConnectButton from "@/components/ConnectButton";
 import useFetchContinents from "@/hooks/useFetchAuctions";
-import { time } from "console";
 import { Bidder } from "@/components/Bidders";
+import MyComponent from "@/components/NewButton";
 
 export type EthereumAddress = `0x${string}`;
 export interface Continent { 
@@ -25,8 +25,11 @@ export interface Continent {
   },
   metadata: {
     attributes: {trait_type: string, value: string}[]
-  }
+  },
+  citizenTax: string,
+  citizens: EthereumAddress[]
 }
+
 
 export default function Home() {
   const { data: continents } = useFetchContinents();
@@ -49,12 +52,12 @@ export default function Home() {
       </div>
       <div className="flex wrap space-x-8 overflow-x">
         {
-          continents && continents.slice(0, 3).map((continent: Continent) => (
+          continents?.data && continents?.data.slice(0, 3).map((continent: Continent) => (
             <ContinentCard continent={continent} key={continent.tokenId} />
           ))
         }
       </div>
-
+      <MyComponent/>
     </main>
   );
 }

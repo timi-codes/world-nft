@@ -12,7 +12,7 @@ const config = createConfig(
         ssr: true,
         transports: {
             [baseSepolia.id]: http(
-                `https://base-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`,
+                process.env.NEXT_PUBLIC_WEB3_PROVIDER_URL || "https://rpc.sepolia.io",
             ),
         },
         walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",

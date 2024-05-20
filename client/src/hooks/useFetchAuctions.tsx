@@ -1,15 +1,19 @@
+import { Continent } from '@/app/page';
+import { FetchAPIResponse, fetchAPI } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 
-const fetchAuctions = async () => { 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auctions`)
-    const data = await response.json()
-    return data
-}
+export type ContinentsResponse = FetchAPIResponse<Continent[]>;
 
+
+const fetchContinents = (): Promise<ContinentsResponse> => {
+    return fetchAPI<Continent[]>('/auctions');
+};
 
 const useFetchContinents = () => {
-    const  { data, ...rest} = useQuery({ queryKey: ['continents'], queryFn: fetchAuctions })
-    return { data: data?.data, ...rest }
+    return useQuery<ContinentsResponse, Error>({
+        queryKey: ['continents'],
+        queryFn: fetchContinents
+    });
 };
 
 export default useFetchContinents;
