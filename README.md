@@ -25,4 +25,8 @@ Tokens are minted to the contract address immediately during deployment. Then co
 
 
 
-## Loom Submission [Video 1](https://www.loom.com/share/ed95eb3c652a43a6a8ce567eff66106d)
+## Loom Submission 
+1. Walthrough of Project and Backend [Video 1](https://www.loom.com/share/ed95eb3c652a43a6a8ce567eff66106d)
+2. Token Contract - [Video 2](https://www.loom.com/share/727d0b41e0e84ddc940bbc88df2f69da)
+3. Continent Auction [Video 3](https://www.loom.com/share/a7a4445fdee94728bddc2b1a2ea82e83)
+4. Test and Closing Remarks [Video 4] - (https://www.loom.com/share/efd5ec9436824d3aa5082965f0f28cb2)
