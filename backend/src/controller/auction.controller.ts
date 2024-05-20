@@ -13,6 +13,28 @@ interface ResponseData {
 
 }
 
+interface Auction {
+    status: number,
+    highestBid: string,
+    bidIncrement: string,
+    highestBidder: string,
+    startTime: number,
+    endTime: number,
+    bids: any[]
+}
+    
+interface Token { 
+    address: string;
+    name: string;
+    tokenId: string;
+    owner: string;
+    image: string;
+    metadata: any;
+    citizenTax: string,
+    citizens: string[]
+
+}
+
 export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req, res) => {
     try {
 
@@ -27,9 +49,9 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
         const tokens = tokenData.tokens.nodes.map((node: any) => node.token);
 
         const auctions = await Promise.all(tokens.map(async (token: any) => { 
-            const auction = await auctionContract.methods.auctions(Number(token.tokenId)).call();
-            const bids = await auctionContract.methods.getBids(Number(token.tokenId)).call();
-            const continent = await continentContract.methods.continents(Number(token.tokenId)).call();
+            const auction: Auction = await auctionContract.methods.auctions(Number(token.tokenId)).call();
+            const bids: string[] = await auctionContract.methods.getBids(Number(token.tokenId)).call();
+            const continent: { citizenTax: string, citizens: string[] } = await continentContract.methods.continents(Number(token.tokenId)).call();
 
             return {
                 address: token.collectionAddress,
@@ -49,7 +71,7 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
                 },
                 citizenTax: continent.citizenTax,
                 citizens: continent.citizens
-            }
+            } as Token
         }));
 
         return res.send({
