@@ -23,4 +23,4 @@ jobs:
         run: docker build -t $IMAGE_TAG --target=truffle .
 
       - name: Run tests in Docker container
-        run: docker run --rm --network="ganache" $IMAGE_TAG sh -c 'truffle test --network development'
+        run: docker run --rm --network="host" $IMAGE_TAG sh -c 'truffle test --network development'
