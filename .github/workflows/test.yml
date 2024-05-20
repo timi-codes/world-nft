@@ -17,6 +17,9 @@ jobs:
       - name: Pull Ganache Docker image
         run: docker pull $GANACHE_IMAGE
 
+      - name: Start Ethereum Client (Ganache)
+        run: docker run -d --name ganache ganache-image:v1
+
       - name: Build the Docker image
         run: docker build -t $IMAGE_TAG --target=truffle .
 
