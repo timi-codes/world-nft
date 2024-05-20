@@ -3,8 +3,7 @@ name: Run tests
 on: [push, pull_request]
 
 env:
-  IMAGE_TAG_TRUFFLE: world-token-truffle
-  IMAGE_TAG_TRUFFLE: world-token-truffle
+  IMAGE_TAG: world-token
 
 jobs:
   test:
