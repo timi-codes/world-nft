@@ -5,10 +5,19 @@ const nextConfig = {
         return config;
     },
     images: {
-        domains: [
-            "gateway.pinata.cloud",
-            "ipfs.decentralized-content.com",
-            "remote-image.decentralized-content.com",
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'gateway.pinata.cloud',
+            },
+            {
+                protocol: 'https',
+                hostname: 'ipfs.decentralized-content.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'remote-image.decentralized-content.com',
+            },
         ],
     },
 };

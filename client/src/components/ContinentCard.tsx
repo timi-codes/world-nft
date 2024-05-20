@@ -8,20 +8,20 @@ import avatar from "gradient-avatar"
 import { Input } from "@/components/ui/input";
 import { Continent, EthereumAddress } from '@/app/page';
 import { shortenAddress, transformIPFSURL } from '@/utils';
-import { useAccount, useWriteContract } from 'wagmi';
+import { useWriteContract,  useSignMessage } from 'wagmi';
 import ContinentAuction from '@contracts/build/ContinentAuction.json'
-import { formatEther, formatUnits, parseEther } from 'viem';
+import { formatEther, parseEther } from 'viem';
 import { toast } from 'sonner';
 import { Label } from './ui/label';
-import HoverContextMenu from './HoverContextMenu';
 import Bidders from './Bidders';
-import { ArrowTopRightIcon } from '@radix-ui/react-icons'
 
 const AUCTION_CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_AUCTION_CONTRACT_ADDRESS?.toLowerCase()) as EthereumAddress;
 const TOKEN_CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS?.toLowerCase()) as EthereumAddress;
 
 const ContinentCard = ({ continent }: { continent: Continent }) => { 
     const highestBid = formatEther(BigInt(continent.auction.highestBid));
+    const {  signMessage } = useSignMessage()
+ 
     const [bidAmount, setBidAmount] = React.useState(highestBid);
     const [startPrice, setStartPrice] = React.useState("");
     const [bidIncrement, setBidIncrement] = React.useState(0.001);
@@ -30,7 +30,6 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
     const hasEnded = Boolean(continent.auction.endTime) && (new Date(continent.auction.endTime) < new Date());
     const isLive = hasCommenced && !hasEnded;
     const toBeAnnounced = !hasCommenced && !hasEnded;
-    console.log(TOKEN_CONTRACT_ADDRESS, continent.owner, !hasCommenced, !hasEnded)
     
     const nextMinBid = formatEther(BigInt(continent.auction.highestBid) + BigInt(continent.auction.bidIncrement));
 
@@ -42,6 +41,12 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                 if (error.message.includes("insufficient funds")) {
                     toast.error("Insufficient funds", {
                         description: "You do not have enough funds to place this bid. Please top up your wallet and try again. The cost of transaction is calculated as `gas * gas fee + value`",
+                        position: "top-left",
+                    })
+                }
+                if (error.message.includes("Ownable: caller is not the owner")) {
+                    toast.error("Transaction failed", {
+                        description: "You can start an auction only if you own the continent",
                         position: "top-left",
                     })
                 }
@@ -66,6 +71,10 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
             functionName: 'createAuction',
             args: [BigInt(continent.tokenId), parseEther(startPrice), parseEther(bidIncrement.toString()), BigInt(duration)],
         })
+    }
+
+    const buyCitizenship = async () => {
+        //todo: implement buy citizenship
     }
 
     return (
@@ -160,7 +169,13 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                                 </button>
                             </div>
                         ) : hasEnded ? (
-                            <button role="button" className="bg-white px-6 py-4 rounded-md text-[14px] hover:bg-white/80 text-black">Become a citizen</button>
+                                <button
+                                    role="button"
+                                    className="bg-white px-6 py-4 rounded-md text-[14px] hover:bg-white/80 text-black"
+                                    onClick={buyCitizenship}
+                                >
+                                    Become a citizen
+                                </button>
                         ) : (<></>)
                     }
                 </div>

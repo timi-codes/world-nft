@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import Web3 from 'web3'
-import { abi } from "@contracts/build/ContinentAuction.json";
+import auctionBuild from "@contracts/build/ContinentAuction.json";
+import continentBuild from "@contracts/build/ContinentToken.json";
 import { AbiItem } from 'web3-utils';
 import { gqlFetch } from "./utils";
 import { GET_CONTRACT_TOKENS, ZORA_CLIENT_URL } from "../constants";
@@ -14,8 +15,10 @@ interface ResponseData {
 
 export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req, res) => {
     try {
-        const web3 = new Web3(`https://base-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`)
-        const auctionContract = new web3.eth.Contract(abi as AbiItem[], process.env.AUCTION_CONTRACT_ADDRESS);
+
+        const web3 = new Web3(`${process.env.WEB3_PROVIDER_URL}`)
+        const auctionContract = new web3.eth.Contract(auctionBuild.abi as AbiItem[], process.env.AUCTION_CONTRACT_ADDRESS);
+        const continentContract = new web3.eth.Contract(continentBuild.abi as AbiItem[], process.env.TOKEN_CONTRACT_ADDRESS);
 
         const response = await gqlFetch(ZORA_CLIENT_URL, GET_CONTRACT_TOKENS, {
             collectionAddresses: [process.env.TOKEN_CONTRACT_ADDRESS]
@@ -26,7 +29,8 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
         const auctions = await Promise.all(tokens.map(async (token: any) => { 
             const auction = await auctionContract.methods.auctions(Number(token.tokenId)).call();
             const bids = await auctionContract.methods.getBids(Number(token.tokenId)).call();
-  
+            const continent = await continentContract.methods.continents(Number(token.tokenId)).call();
+
             return {
                 address: token.collectionAddress,
                 name: token.name,
@@ -42,7 +46,9 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
                     startTime: auction.startTime > 0 ? new Date(auction.startTime * 1000) : null,
                     endTime: auction.startTime > 0  ? new Date(auction.endTime * 1000) : null,
                     bids: bids.map((bid: any) => ({ amount: bid[0], timestamp: new Date(bid[1] * 1000), address: bid[2] })).sort((a: any, b: any) => b.amount - a.amount)
-                }
+                },
+                citizenTax: continent.citizenTax,
+                citizens: continent.citizens
             }
         }));
 
