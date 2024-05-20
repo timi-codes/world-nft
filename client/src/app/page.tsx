@@ -5,7 +5,6 @@ import React from "react";
 import ConnectButton from "@/components/ConnectButton";
 import useFetchContinents from "@/hooks/useFetchAuctions";
 import { Bidder } from "@/components/Bidders";
-import MyComponent from "@/components/NewButton";
 
 export type EthereumAddress = `0x${string}`;
 export interface Continent { 
@@ -57,7 +56,6 @@ export default function Home() {
           ))
         }
       </div>
-      <MyComponent/>
     </main>
   );
 }
