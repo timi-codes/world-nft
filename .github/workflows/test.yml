@@ -10,19 +10,18 @@ jobs:
   test:
     name: Docker build and test
     runs-on: ubuntu-latest
+    services:
+      ganache:
+        image: $GANACHE_IMAGE
+        ports:
+          - 8545:8545
+        options: --name ganache
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
-
-      - name: Pull Ganache Docker image
-        run: docker pull $GANACHE_IMAGE
-
-      - name: Start Ethereum Client (Ganache)
-        run: docker run -d --name ganache $GANACHE_IMAGE
 
       - name: Build the Docker image
         run: docker build -t $IMAGE_TAG --target=truffle .
 
       - name: Run tests in Docker container
-        run: |
-          docker run --rm --network="host" $IMAGE_TAG sh -c 'truffle test --network development'
+        run: docker run --rm $IMAGE_TAG sh -c 'truffle test --network development'
