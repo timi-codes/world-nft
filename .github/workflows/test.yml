@@ -3,7 +3,8 @@ name: Run tests
 on: [push, pull_request]
 
 env:
-  IMAGE_TAG: world-token
+  IMAGE_TAG_TRUFFLE: world-token-truffle
+  IMAGE_TAG_TRUFFLE: world-token-truffle
 
 jobs:
   test:
@@ -13,8 +14,17 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v2
 
+      - name: Start Ganache
+        run: |
+          docker run -d --name ganache david959/ganache-image:v1
+          sleep 5 # Wait for Ganache to start
+
       - name: Build the Docker image
         run: docker build -t $IMAGE_TAG --target=truffle .
 
-      - name: Run tests
-        run: docker run $IMAGE_TAG sh -c 'yarn test'
+      - name: Run tests in Docker container
+        run: |
+          docker run --rm --network="host" $IMAGE_TAG sh -c 'truffle test --network ganache'
+
+      - name: Stop Ganache
+        run: docker stop ganache
