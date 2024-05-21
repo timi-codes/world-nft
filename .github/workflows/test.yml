@@ -17,8 +17,10 @@ jobs:
         #   - 8545:8545
     steps:
       - name: Check running containers
-        run: docker ps -a
-        
+        run: docker network create backend || true
+      - name: Connect to Ganache
+        run: docker network connect backend ganache
+            
       - name: Check container networks
         run: docker network ls
 
