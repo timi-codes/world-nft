@@ -17,26 +17,6 @@ jobs:
         ports:
           - 8545:8545
     steps:
-      - name: Check running containers
-        run: docker network create backend || true
-
-      - name: Connect to Ganache
-        run: docker network connect backend ganache
-
-      - name: Check running containers
-        run: docker ps -a
-        
-      - name: Check container networks
-        run: docker network ls
-
-      - name: Check Ganache container network connection
-        run: docker inspect --format='{{json .NetworkSettings.Networks}}' ganache
-
-      - name: List running containers
-        run: docker ps
-
-      - name: Check Ganache logs
-        run: docker logs ganache
 
       - name: Check out the repository
         uses: actions/checkout@v2
