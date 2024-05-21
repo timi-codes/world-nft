@@ -33,7 +33,10 @@ jobs:
 
       - name: List running containers
         run: docker ps
-        
+
+      - name: Check Ganache logs
+        run: docker logs ganache
+
       - name: Check out the repository
         uses: actions/checkout@v2
 
