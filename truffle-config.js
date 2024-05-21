@@ -2,6 +2,8 @@ const path = require("path");
 require('dotenv').config();
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
+const { pipeline } = require("stream");
+const { hostname } = require("os");
 const mnemonic = process.env.MNEMONIC;
 const alchemyKey = process.env.ALCHEMY_API_KEY;
 
@@ -10,6 +12,11 @@ module.exports = {
   networks: {
     development: {
       host: "127.0.0.1",
+      port: 8545,
+      network_id: "*"
+    },
+    pipeline: {
+      hostname: "backend",
       port: 8545,
       network_id: "*"
     },
