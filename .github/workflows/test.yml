@@ -16,10 +16,11 @@ jobs:
         ports:
           - 8545:8545
     steps:
-      - name: Debugging information
-        run: |
-          echo "GitHub Server URL: $GITHUB_SERVER_URL"
-          echo "Local Ganache URL: $GITHUB_SERVER_URL:8545"
+      - name: Check running containers
+        run: docker ps -a
+        
+      - name: Check container networks
+        run: docker network ls
 
       - name: Check out the repository
         uses: actions/checkout@v2
