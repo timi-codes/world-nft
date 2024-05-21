@@ -16,7 +16,7 @@ module.exports = {
       network_id: "*"
     },
     pipeline: {
-      hostname: "ganache",
+      hostname: "0.0.0.0",
       port: 8545,
       network_id: "*"
     },
