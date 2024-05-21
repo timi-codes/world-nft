@@ -13,8 +13,8 @@ jobs:
       ganache:
         image: david9595/ganache-image:v1
         options: --name ganache
-        ports:
-          - 8545:8545
+        # ports:
+        #   - 8545:8545
     steps:
       - name: Check running containers
         run: docker ps -a
