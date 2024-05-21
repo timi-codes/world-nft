@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   IMAGE_TAG: world-token
+  BASE_TOKEN_URI: https://example.com/token/
 
 jobs:
   test:
