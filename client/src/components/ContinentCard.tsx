@@ -166,10 +166,10 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                         ) : hasEnded ? (
                                 <button
                                     role="button"
-                                    className="bg-white px-6 py-4 rounded-md text-[14px] hover:bg-white/80 text-black"
+                                    className="bg-white px-5 py-4 rounded-md text-[14px] hover:bg-white/80 text-black text-xs"
                                     onClick={buyCitizenship}
                                 >
-                                    Become a citizen
+                                    Become a citizen ({continent.citizenTax} ETH)
                                 </button>
                         ) : (<></>)
                     }

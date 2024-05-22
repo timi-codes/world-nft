@@ -36,6 +36,10 @@ export default function Home() {
   const { data: continents } = useFetchContinents();
   const scrollRef = useHorizontalScroll();
 
+  console.log(continents?.data)
+
+  const auctioned = continents?.data?.filter((continent: Continent) => Boolean(continent.auction.endTime) && (new Date(continent.auction.endTime) < new Date())).length;
+
   return (
     <main ref={scrollRef} className="flex h-screen  overflow-hidden flex-col  justify-between p-24 p-8 z-[-1]  after:-top-40 after:-left-52 after:rounded-full after:absolute after:-z-20 after:h-[400px] after:w-[400px] after:translate-x-1/3 after:bg-[#7D49EA]/15  after:content-[''] after:blur-2xl before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-['']  before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#7D49EA] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[400px] before:lg:h-[360px] before:-bottom-40 before:right-0 before:hidden">
       <div className="flex flex-col justify-between sticky -left-0 w-full -mt-4">
@@ -63,7 +67,7 @@ export default function Home() {
 
         <div className="py-8 text-center opacity-80">
           <p><span className="font-bold">7</span> Continents, <span className="font-bold">7</span> NFTs, <span className="font-bold">7</span> Owners</p>
-          <p className="bg-gradient-to-r from-rose-600 via-amber-500 to-orange-400 inline-block text-transparent bg-clip-text font-bold">Auctioned: 4/7</p>
+          <p className="bg-gradient-to-r from-rose-600 via-amber-500 to-orange-400 inline-block text-transparent bg-clip-text font-bold">Auctioned Ended: {auctioned}/7</p>
           </div>
       </div>
       <div className="flex flex-col"> 
