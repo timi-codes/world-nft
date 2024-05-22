@@ -7,9 +7,10 @@ import Tilt from "react-parallax-tilt";
 import avatar from "gradient-avatar"
 import { Input } from "@/components/ui/input";
 import { Continent, EthereumAddress } from '@/app/page';
-import { shortenAddress, transformIPFSURL } from '@/utils';
-import { useWriteContract,  useSignMessage } from 'wagmi';
+import { shortenAddress, showError, transformIPFSURL } from '@/utils';
+import { useWriteContract, useSimulateContract } from 'wagmi';
 import ContinentAuction from '@/contracts/ContinentAuction.json';
+import ContinentToken from '@/contracts/ContinentToken.json';
 import { formatEther, parseEther } from 'viem';
 import { toast } from 'sonner';
 import { Label } from './ui/label';
@@ -20,8 +21,6 @@ const TOKEN_CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS?.
 
 const ContinentCard = ({ continent }: { continent: Continent }) => { 
     const highestBid = formatEther(BigInt(continent.auction.highestBid));
-    const {  signMessage } = useSignMessage()
- 
     const [bidAmount, setBidAmount] = React.useState(highestBid);
     const [startPrice, setStartPrice] = React.useState("");
     const [bidIncrement, setBidIncrement] = React.useState(0.001);
@@ -38,18 +37,7 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
             onError(error, variables, context) {
                 console.log(error, variables, context)
                 console.error(error.message)
-                if (error.message.includes("insufficient funds")) {
-                    toast.error("Insufficient funds", {
-                        description: "You do not have enough funds to place this bid. Please top up your wallet and try again. The cost of transaction is calculated as `gas * gas fee + value`",
-                        position: "top-left",
-                    })
-                }
-                if (error.message.includes("Ownable: caller is not the owner")) {
-                    toast.error("Transaction failed", {
-                        description: "You can start an auction only if you own the continent",
-                        position: "top-left",
-                    })
-                }
+                showError(error.message)
             },
         }
     })
@@ -67,14 +55,21 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
     const createAuction = () => { 
         writeContract({
             abi: ContinentAuction.abi,
-            address: AUCTION_CONTRACT_ADDRESS,
+            // address: AUCTION_CONTRACT_ADDRESS,
+            address: "0x0686b68Ed021883D5aCEeEE52c93E93937e1ed81",
             functionName: 'createAuction',
             args: [BigInt(continent.tokenId), parseEther(startPrice), parseEther(bidIncrement.toString()), BigInt(duration)],
         })
     }
 
     const buyCitizenship = async () => {
-        //todo: implement buy citizenship
+        writeContract({
+            abi: ContinentToken.abi,
+            address: "0x8148b0Ee040B1CFBb573bE82DE3704A20C139ccE",
+            functionName: 'buyCitizenship',
+            args: [BigInt(continent.tokenId)],
+            value: parseEther("0.001")
+        })
     }
 
     return (

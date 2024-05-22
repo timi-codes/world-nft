@@ -20,7 +20,7 @@ const CardSkeloton = () => {
                     <div className="flex justify-center">
                         <Skeleton className="h-[250px] w-[250px] bg-[#545454]/5 rounded-full" />
                     </div>
-                    <Skeleton className="h-6 w-[60px] bg-[#545454]/5 rounded-full" />
+                    <Skeleton className="h-5 w-[60px] bg-[#545454]/5 rounded-full" />
                 </div>
 
                 <div className={`flex items-center justify-between py-3 px-3 border-t border-[0.5] border-[#545454]/20`}>
