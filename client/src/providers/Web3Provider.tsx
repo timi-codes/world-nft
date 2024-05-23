@@ -1,19 +1,20 @@
 "use client"
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { mainnet, base, baseSepolia } from "wagmi/chains";
+import { mainnet, base, baseSepolia, localhost } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import { ReactNode } from "react";
 
 const config = createConfig(
     getDefaultConfig({
-        chains: [baseSepolia],
+        chains: [baseSepolia, localhost],
         ssr: true,
         transports: {
             [baseSepolia.id]: http(
                 process.env.NEXT_PUBLIC_WEB3_PROVIDER_URL || "https://rpc.sepolia.io",
             ),
+            [localhost.id]: http("http://127.0.0.1:8545")
         },
         walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
         appName: "WORLD TOKEN 🌍",
