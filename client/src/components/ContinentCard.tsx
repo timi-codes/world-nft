@@ -8,11 +8,10 @@ import avatar from "gradient-avatar"
 import { Input } from "@/components/ui/input";
 import { Continent, EthereumAddress } from '@/app/page';
 import { shortenAddress, showError, transformIPFSURL } from '@/utils';
-import { useWriteContract, useSimulateContract } from 'wagmi';
+import { useWriteContract } from 'wagmi';
 import ContinentAuction from '@/contracts/ContinentAuction.json';
 import ContinentToken from '@/contracts/ContinentToken.json';
 import { formatEther, parseEther } from 'viem';
-import { toast } from 'sonner';
 import { Label } from './ui/label';
 import Bidders from './Bidders';
 
@@ -65,7 +64,7 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
     const buyCitizenship = async () => {
         writeContract({
             abi: ContinentToken.abi,
-            address: "0x8148b0Ee040B1CFBb573bE82DE3704A20C139ccE",
+            address: "0xDD250DBa2b92C26150ab735FF9FE990A96B6b156",
             functionName: 'buyCitizenship',
             args: [BigInt(continent.tokenId)],
             value: parseEther("0.001")
@@ -124,7 +123,7 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                             </div>
                         ) : (
                             <div className="flex items-center space-x-2">
-                                    <Bidders data={{ ...continent.auction, hasEnded, onlyWinner: false }} >
+                                    <Bidders data={{ ...continent.auction, hasEnded, onlyWinner: false }}>
                                         <Image
                                             role="button"
                                             src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar(continent.auction.highestBidder))}`}
@@ -156,9 +155,9 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                                 />
                                 <button
                                     role="button"
-                                    className={`bg-white px-6 py-4 rounded-md text-[14px] hover:bg-white/80 text-black ${Number(bidAmount) <= Number(nextMinBid) ? "opacity-10" : ""}`}
+                                    className={`bg-white px-6 py-4 rounded-md text-[14px] hover:bg-white/80 text-black ${Number(bidAmount) >= Number(nextMinBid) ? "opacity-100" : "opacity-10"}`}
                                     onClick={placeBid}
-                                    disabled={Number(bidAmount) < Number(nextMinBid)}
+                                    disabled={Number(bidAmount) >= Number(nextMinBid)}
                                 >
                                     Place a bid
                                 </button>
