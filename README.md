@@ -1,5 +1,5 @@
 # WORLD NFT 
-[CNT TOKEN](https://base-sepolia.blockscout.com/token/0x8d098d44032e93528049357611A25Dab4C20230e): This collection is made of up world's continents (Africa, Asia, Europe, North America, South America, Australia, and Antarctica). Each continent NFT have an associated opensea metadata standard with a limited supply of 7 items.
+[CNT TOKEN](https://base-sepolia.blockscout.com/token/0x8d098d44032e93528049357611A25Dab4C20230e): This collection is made up world's continents (Africa, Asia, Europe, North America, South America, Australia, and Antarctica). Each continent NFT have an associated opensea metadata standard with a limited supply of 7 items.
 Tokens are minted to the contract address immediately during deployment. Then contract owner get to kickstart the auction by calling the `createAuction` methods in ContinentAuction.sol. ContinentAuction.sol is the contract that manages the auctions and bidding. it is initialised with the token address on deployment so tha 
 
 ## Deployed to Base 
