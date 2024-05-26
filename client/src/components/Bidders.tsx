@@ -49,7 +49,7 @@ const Bidders: React.FC<BiddersProps> = ({ data, children }) => {
                     <div>
                         <p className=" font-bold mb-2">Bidders</p>
                         {
-                                data.bids.map((bid) => (
+                            data.bids.map((bid) => (
                                 <div key={bid.timestamp} className='flex items-center justify-between w-full mb-[10px]'>
                                     <div className='flex items-center'>
                                         <a href={`https://base-sepolia.blockscout.com/address/${bid.address}`} target='_blank' className='flex items-center hover:underline'>

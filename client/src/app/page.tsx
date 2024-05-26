@@ -67,7 +67,7 @@ export default function Home() {
 
         <div className="py-8 text-center opacity-80">
           <p><span className="font-bold">7</span> Continents, <span className="font-bold">7</span> NFTs, <span className="font-bold">7</span> Owners</p>
-          <p className="bg-gradient-to-r from-rose-600 via-amber-500 to-orange-400 inline-block text-transparent bg-clip-text font-bold">Auctioned Ended: {auctioned}/7</p>
+          <p className="bg-gradient-to-r from-rose-600 via-amber-500 to-orange-400 inline-block text-transparent bg-clip-text font-bold">Ended Auctions: {auctioned}/7</p>
           </div>
       </div>
       <div className="flex flex-col"> 
