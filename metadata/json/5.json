@@ -1,1 +1,58 @@
-{"name":"North America #5","description":"North America is a continent entirely within the Northern Hemisphere and almost all within the Western Hemisphere. It can also be described as the northern subcontinent of the Americas. It is bordered to the north by the Arctic Ocean, to the east by the Atlantic Ocean, to the southeast by South America and the Caribbean Sea, and to the west and south by the Pacific Ocean. However, Greenland, because it is on the North American Tectonic Plate, is often included as part of North America geographically.","attributes":[{"name":"Population","value":"579 million"},{"name":"Area","value":"24,709,000 km2"},{"name":"Density","value":"22.2/km2"}],"otherAttributes":{"languages":"English, Spanish, French, Dutch","religions":"Christianity, Judaism, Islam, Others","time_zones":"UTC−10 to UTC","largest_cities":"Mexico City, New York City, Los Angeles, Chicago, Toronto"},"countries":["Antigua and Barbuda","Bahamas","Barbados","Belize","Canada","Costa Rica","Cuba","Dominica","Dominican Republic","El Salvador","Grenada","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Trinidad and Tobago","United States"],"cities":["Mexico City","New York City","Los Angeles","Chicago","Toronto"],"image":"ipfs://bafybeicm6fb54p7g4x6zi2s7fxlez656yiei2lxptqeivrwgvsp4iogs7y/5.png","external_url":"https://world-token.playstudio.ca/5"}
+{
+    "name": "North America #5",
+    "description": "North America is a continent entirely within the Northern Hemisphere and almost all within the Western Hemisphere. It can also be described as the northern subcontinent of the Americas. It is bordered to the north by the Arctic Ocean, to the east by the Atlantic Ocean, to the southeast by South America and the Caribbean Sea, and to the west and south by the Pacific Ocean. However, Greenland, because it is on the North American Tectonic Plate, is often included as part of North America geographically.",
+    "attributes": [
+        {
+            "trait_type": "Population",
+            "value": "579 million"
+        },
+        {
+            "trait_type": "Area",
+            "value": "24,709,000 km2"
+        },
+        {
+            "trait_type": "Density",
+            "value": "22.2/km2"
+        }
+    ],
+    "otherAttributes": {
+        "languages": "English, Spanish, French, Dutch",
+        "religions": "Christianity, Judaism, Islam, Others",
+        "time_zones": "UTC−10 to UTC",
+        "largest_cities": "Mexico City, New York City, Los Angeles, Chicago, Toronto"
+    },
+    "countries": [
+        "Antigua and Barbuda",
+        "Bahamas",
+        "Barbados",
+        "Belize",
+        "Canada",
+        "Costa Rica",
+        "Cuba",
+        "Dominica",
+        "Dominican Republic",
+        "El Salvador",
+        "Grenada",
+        "Guatemala",
+        "Haiti",
+        "Honduras",
+        "Jamaica",
+        "Mexico",
+        "Nicaragua",
+        "Panama",
+        "Saint Kitts and Nevis",
+        "Saint Lucia",
+        "Saint Vincent and the Grenadines",
+        "Trinidad and Tobago",
+        "United States"
+    ],
+    "cities": [
+        "Mexico City",
+        "New York City",
+        "Los Angeles",
+        "Chicago",
+        "Toronto"
+    ],
+    "image": "ipfs://bafybeicm6fb54p7g4x6zi2s7fxlez656yiei2lxptqeivrwgvsp4iogs7y/5.png",
+    "external_url": "https://world-token.playstudio.ca/5"
+}
