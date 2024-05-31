@@ -27,10 +27,3 @@ I developed two contracts. CNT is an ERC721 NFT. Tokens are minted to the contra
 1. Deployed to [CNT TOKEN](https://base-sepolia.blockscout.com/token/0x8d098d44032e93528049357611A25Dab4C20230e) [File](https://github.com/timi-codes/world-nft/blob/main/contracts/ContinentToken.sol)
 2. Auction Smart Contract [](https://github.com/timi-codes/world-nft/blob/main/contracts/ContinentAuction.sol)
 
-
-
-## Loom Submission 
-1. Walthrough of Project and Backend - [Video 1](https://www.loom.com/share/ed95eb3c652a43a6a8ce567eff66106d)
-2. Token Contract - [Video 2](https://www.loom.com/share/727d0b41e0e84ddc940bbc88df2f69da)
-3. Continent Auction - [Video 3](https://www.loom.com/share/a7a4445fdee94728bddc2b1a2ea82e83)
-4. Test and Closing Remarks - [Video 4](https://www.loom.com/share/efd5ec9436824d3aa5082965f0f28cb2)
