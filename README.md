@@ -2,6 +2,9 @@
 This collection is made of up world's continents (Africa, Asia, Europe, North America, South America, Australia, and Antarctica). Each continent NFT have an associated opensea metadata standard with a limited supply of 7 items.
 Tokens are minted to the contract address immediately during deployment. Then contract owner get to kickstart the auction by calling the `createAuction` methods in `ContinentAuction.sol`. `ContinentAuction.sol` is the contract that manages the auctions and bidding. it is initialised with the token address on deployment.
 
+
+![alt text](image.png)
+
 ## Technologies
 - Solidity
 - Truffle
