@@ -2,8 +2,6 @@ const path = require("path");
 require('dotenv').config();
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const { pipeline } = require("stream");
-const { hostname } = require("os");
 const mnemonic = process.env.MNEMONIC;
 const alchemyKey = process.env.ALCHEMY_API_KEY;
 

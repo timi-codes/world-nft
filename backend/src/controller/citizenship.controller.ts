@@ -17,7 +17,7 @@ const web3 = new Web3(process.env.WEB3_PROVIDER as string)
 export const joinCitizenship: RequestHandler<{}, ResponseData, CitizenPayload, {}> = async (req, res) => {
     try {
         const { signed_trx_hash } = req.body
-        
+    
         const trx = await web3.eth.sendSignedTransaction(signed_trx_hash)
 
         return res.send({

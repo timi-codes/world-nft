@@ -66,6 +66,18 @@ contract ContinentAuction is Ownable {
         emit AuctionStarted(_tokenId, auctions[_tokenId].startTime, auctions[_tokenId].endTime);
     }
 
+    function endAuction(uint256 _tokenId) public onlyOwner {
+        Auction storage auction = auctions[_tokenId];
+
+        require(auction.endTime > 0 && auction.status != AuctionStatus.Pending, "Auction not started");
+        require(auction.endTime <= block.timestamp, "Auction not ended yet");
+
+        auction.status = AuctionStatus.Closed;
+        continentTokenContract.safeTransferFrom(address(this), auction.highestBidder, _tokenId);
+
+        emit AuctionEnded(auction.highestBidder, _tokenId, auction.highestBid);
+    }
+
     function setAuctionStatus(uint256 _tokenId, AuctionStatus _status) public onlyOwner {
         auctions[_tokenId].status = _status;
     }

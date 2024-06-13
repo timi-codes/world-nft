@@ -54,8 +54,7 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
     const createAuction = () => { 
         writeContract({
             abi: ContinentAuction.abi,
-            // address: AUCTION_CONTRACT_ADDRESS,
-            address: "0x0686b68Ed021883D5aCEeEE52c93E93937e1ed81",
+            address: AUCTION_CONTRACT_ADDRESS,
             functionName: 'createAuction',
             args: [BigInt(continent.tokenId), parseEther(startPrice), parseEther(bidIncrement.toString()), BigInt(duration)],
         })
@@ -64,10 +63,10 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
     const buyCitizenship = async () => {
         writeContract({
             abi: ContinentToken.abi,
-            address: "0xDD250DBa2b92C26150ab735FF9FE990A96B6b156",
+            address: TOKEN_CONTRACT_ADDRESS,
             functionName: 'buyCitizenship',
             args: [BigInt(continent.tokenId)],
-            value: parseEther("0.001")
+            value: parseEther(continent.citizenTax)
         })
     }
 
@@ -114,7 +113,7 @@ const ContinentCard = ({ continent }: { continent: Continent }) => {
                             <div className="flex items-center justify-between w-full mx-4 opacity-90 h-full mt-2">
                                 {
                                     continent.metadata.attributes.map((attr) => (
-                                        <div key={attr.trait_type}>
+                                        <div key={`${attr.trait_type}-${attr.value}`}>
                                             <p className="text-xs font-light opacity-70">{attr.trait_type}</p>
                                             <p className="-mt-0 text-[14px]"> {attr.value}</p>
                                         </div>

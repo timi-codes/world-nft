@@ -69,7 +69,7 @@ export const getAuctions: RequestHandler<{}, ResponseData, {}, {}> = async (req,
                     status: BigInt(auction.status).toString(),
                     highestBid: BigInt(auction.highestBid).toString(),
                     bidIncrement: BigInt(auction.bidIncrement).toString(),
-                    highestBidder: BigInt(auction.highestBidder).toString(),
+                    highestBidder: auction.highestBidder,
                     startTime: convertToNumber(auction.startTime) > 0 ? new Date(convertToNumber(auction.startTime) * 1000) : null,
                     endTime: convertToNumber(auction.endTime) > 0 ? new Date(convertToNumber(auction.endTime) * 1000) : null,
                     bids: bids.map((bid: any) => ({ 
